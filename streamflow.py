@@ -1,7 +1,12 @@
 import requests
 import datetime as dt
 import pandas as pd
+from bs4 import BeautifulSoup
 from io import StringIO
+import matplotlib.pyplot as plt
+
+
+
 
 def request_streamflow(station_id, start, end):
     """
@@ -32,6 +37,10 @@ def request_streamflow(station_id, start, end):
         r = requests.get(url, params=payload)
         rdata = pd.read_csv(StringIO(r.text), sep='\t', skiprows=15)
         data = data.append(rdata)
+    data.columns = ['Station', 'Date', 'Discharge']
+    data['Date'] = pd.to_datetime(data['Date'])
+    data = data.set_index('Date')
+    data['Discharge'] = pd.to_numeric(data['Discharge'], errors='coerce')
     return data
 
 
@@ -58,5 +67,43 @@ def _date_split(start, end):
     dates[-1] = end_date
     return dates
 
-df = request_streamflow('BOCOROCO', '2010/01/01', '2015/06/01')
-print(df)
+def request_station_dict():
+    url = 'http://www.dwr.state.co.us/SurfaceWater/default.aspx'
+    r = requests.get(url)
+    soup = BeautifulSoup(r.content, 'lxml')
+    options = soup.find_all('option')
+    station_id = [option['value'] for option in options]
+    station_name = [option.text for option in options]
+    station_dict = dict(zip(station_id, station_name))
+    return station_dict
+
+
+def plot_ts(data, ax=None, fig=None, fig_kwargs=None):
+
+    # Grab station information to use in plot title
+    station_id = data['Station'][0]
+    station_dict = request_station_dict()
+    station_name = station_dict[station_id]
+
+    # Create figure and/or axis if no existing figure/axis objects are passed
+    if fig_kwargs is None:
+        fig_kwargs = dict(figsize=(11, 8.5))
+
+    if fig is None:
+        fig = plt.figure(**fig_kwargs)
+
+    if ax is None:
+        ax = fig.add_subplot(1, 1, 1)
+
+    # Plot on axis
+    ax.plot(data.index, data['Discharge'])
+    ax.set_ylim([0, 1.2*data['Discharge'].max()])
+    ax.set_xlabel('Date')
+    ax.set_ylabel('Discharge (cfs)')
+    ax.set_title(station_name)
+    return fig, ax
+
+# Test
+# data = request_streamflow('BOCOROCO', '2010/01/01', '2010/02/01')
+# fig, ax = plot_ts(data)
+# plt.show()
