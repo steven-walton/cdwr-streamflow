@@ -76,6 +76,24 @@ def _get_station_dict():
     return station_dict
 
 
+def get_station_list():
+    station_dict = _get_station_dict()
+    station_list = [station_dict[key] for key in station_dict]
+    return station_list
+
+
+def search_station(string):
+    result = None
+    station_dict = _get_station_dict()
+    for key in station_dict:
+        if (string.lower() in station_dict[key].lower()) or (string.lower() in key.lower()):
+            result = key
+            print(station_dict[key])
+    if result is None:
+        print(f'No results found for {string}')
+    return result
+
+
 def plot_ts(data, ax=None, fig=None, fig_kwargs=None):
 
     # Grab station information to use in plot title
