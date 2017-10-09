@@ -118,8 +118,3 @@ def plot_ts(data, ax=None, fig=None, fig_kwargs=None):
     ax.set_ylabel('Discharge (cfs)')
     ax.set_title(station_name)
     return fig, ax
-
-# Test
-# data = request_streamflow('BOCOROCO', '2010/01/01', '2010/02/01')
-# fig, ax = plot_ts(data)
-# plt.show()
