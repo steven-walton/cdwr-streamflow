@@ -65,7 +65,7 @@ def _date_split(start, end):
     dates[-1] = end_date
     return dates
 
-def request_station_dict():
+def _get_station_dict():
     url = 'http://www.dwr.state.co.us/SurfaceWater/default.aspx'
     r = requests.get(url)
     soup = BeautifulSoup(r.content, 'lxml')
@@ -80,7 +80,7 @@ def plot_ts(data, ax=None, fig=None, fig_kwargs=None):
 
     # Grab station information to use in plot title
     station_id = data['Station'][0]
-    station_dict = request_station_dict()
+    station_dict = _get_station_dict()
     station_name = station_dict[station_id]
 
     # Create figure and/or axis if no existing figure/axis objects are passed
