@@ -6,9 +6,7 @@ from io import StringIO
 import matplotlib.pyplot as plt
 
 
-
-
-def request_streamflow(station_id, start, end):
+def get_streamflow(station_id, start, end):
     """
     Requests tabular streamflow discharge data from Colorado Department of Water Resources for a
     given station ID over a specified date range. Date range is limited to one year of data.
