@@ -9,18 +9,10 @@ import matplotlib.pyplot as plt
 def get_streamflow(station_id, start, end):
     """
     Requests tabular streamflow discharge data from Colorado Department of Water Resources for a
-    given station ID over a specified date range. Date range is limited to one year of data.
+    given station ID over a specified date range. 
 
     Example:
         request_streamflow('BOCOROCO', '2010/01/01', '2011/01/01)
-
-    :param station_id: CWDR Station Abbreviation
-    :type station_id: str
-    :param start: Start date string in the ISO 8601 format 'YYYY/MM/DD'
-    :type start: str
-    :param end: End date string in the ISO 8601 format 'YYYY/MM/DD'
-    :type end: str
-    :return: Pandas DataFrame object
     """
 
     data = pd.DataFrame()
@@ -44,17 +36,13 @@ def get_streamflow(station_id, start, end):
 
 def _date_split(start, end):
     """
+    Splits dates into one year increments.
+
     Uses a specified start and end date as strings and splits it into a list of dates as strings
     with a maximum difference of 365 days between entries.
 
     Since tabular CWDR data is limited to a range of one-year, this function is used to split a
     longer request into several, smaller requests.
-
-    :param start: Start date string in ISO 8601 format 'YYYY/MM/DD'
-    :type start: str
-    :param end: End date string in the ISO 8601 format 'YYYY/MM/DD'
-    :type end: str
-    :return: List of date strings
     """
     start_date, end_date = dt.datetime.strptime(start, '%Y/%m/%d'),\
                            dt.datetime.strptime(end, '%Y/%m/%d')
@@ -83,6 +71,9 @@ def get_station_list():
 
 
 def search_station(string):
+    """
+    Searches for a station using a non-case sensitive string.
+    """
     result = None
     station_dict = _get_station_dict()
     for key in station_dict:
@@ -95,7 +86,14 @@ def search_station(string):
 
 
 def plot_ts(data, ax=None, fig=None, fig_kwargs=None):
+    """
+    Plot streamflow DataFrame as a timeseries.
 
+    Plots streamflow data as a simple timeseries plot, either on an existing
+    matplotlib figure and axis. If no fig, ax is specified, creates a new
+    figure and ax. Can accept key word arguments to pass to plt.figure. Returns
+    figure and axis objects.
+    """
     # Grab station information to use in plot title
     station_id = data['Station'][0]
     station_dict = _get_station_dict()
