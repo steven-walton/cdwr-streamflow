@@ -4,8 +4,9 @@
 This repository is for requesting, wrangling, and visualizing Colorado Department of Water Resources streamgauge data.
 Data is sourced from the [Colorado Department of Water Resources](http://cdss.state.co.us/onlineTools/Pages/StreamflowStations.aspx).
 
-## Todo List
-1. *In progress* Create basic functionality for accessing and reading streamgauge data from CDWR's website 
-2. Create tools for summary statistics and common visualization of collected streamflow data, simple time series, seasonal, diurnal plots
-3. Develop app for viewing streamgauge stats/plots with real-time updates.
-4. Add streamgauge notification system allowing users to recieve updates by SMS or e-mail when a gauge exceeds or drops below a specified value, similar to USGS's water alert
+## Functinality
+1. Access or scrape data from CDWR's streamflow webpage using python's Requests and BeautifulSoup4 modules
+2. Process streamflow data to provide summary statistics as well as simple time series, seasonal, and diurnal plots within the Matplotlib plotting library.
+
+## Installation
+Currently, the library is stored in streamflow.py, with simple examples of functionality in test.py. In the future, setup.py and \_\_init__.py will be added so that the library can be imported to python as a module. 
