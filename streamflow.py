@@ -4,6 +4,7 @@ import pandas as pd
 from bs4 import BeautifulSoup
 from io import StringIO
 import matplotlib.pyplot as plt
+from datetime import datetime
 
 
 def get_streamflow(station_id, start, end):
@@ -84,6 +85,20 @@ def search_station(string):
         print(f'No results found for {string}')
     return result
 
+def _fig_setup(ax, fig, fig_kwargs):
+    """
+    Setup figure, ax for plotting
+    """
+    if fig_kwargs is None:
+        fig_kwargs = dict(figsize=(11, 8.5))
+
+    if fig is None:
+        fig = plt.figure(**fig_kwargs)
+
+    if ax is None:
+        ax = fig.add_subplot(1, 1, 1)
+
+    return fig, ax
 
 def plot_ts(data, ax=None, fig=None, fig_kwargs=None):
     """
@@ -100,15 +115,8 @@ def plot_ts(data, ax=None, fig=None, fig_kwargs=None):
     station_name = station_dict[station_id]
 
     # Create figure and/or axis if no existing figure/axis objects are passed
-    if fig_kwargs is None:
-        fig_kwargs = dict(figsize=(11, 8.5))
-
-    if fig is None:
-        fig = plt.figure(**fig_kwargs)
-
-    if ax is None:
-        ax = fig.add_subplot(1, 1, 1)
-
+    fig, ax = _fig_setup(ax, fig, fig_kwargs)
+    
     # Plot on axis
     ax.plot(data.index, data['Discharge'])
     ax.set_ylim([0, 1.2*data['Discharge'].max()])
@@ -116,3 +124,30 @@ def plot_ts(data, ax=None, fig=None, fig_kwargs=None):
     ax.set_ylabel('Discharge (cfs)')
     ax.set_title(station_name)
     return fig, ax
+
+def plot_diurnal(data, ax=None, fig=None, fig_kwargs=None):
+    """
+    Plot streamflow DataFrame as daily diurnal plot.
+    """
+     # Grab station information to use in plot title
+    station_id = data['Station'][0]
+    station_dict = _get_station_dict()
+    station_name = station_dict[station_id]
+
+    # Convert to diurnal
+    df = data.copy()
+    df['dTime'] = df.index.map(lambda x: datetime.strftime(x, '%H:%M')
+    df.groupby(['dTime']).describe()
+
+    # Create figure/axis if no existing figure/axis objects are passed
+    fig, ax = _fig_setup(ax, fig, fig_kwargs)
+
+    # Plot on axis
+    ax.plot(df.index, df['mean'], c='r')
+    ax.plot(df.index, df['25%'], c='r')
+    ax.plot(df.index, df['%75'], c='r')
+    #ax.fill_between(
+
+    
+
+   
